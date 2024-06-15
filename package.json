@@ -4,7 +4,7 @@
   "main": "index.js",
   "bin": "./main.js",
   "scripts": {
-    "start": "pm2 start . --name octapush"
+    "start": "pm2 start . --name octopush"
   },
   "keywords": [],
   "author": "",
