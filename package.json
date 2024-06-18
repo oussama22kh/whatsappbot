@@ -1,28 +1,48 @@
 {
-  "name": "test",
+  "name": "octopush-client",
+  "productName": "Octopush Client",
   "version": "1.0.0",
-  "main": "index.js",
-  "bin": "./main.js",
+  "main": "main.js",
   "scripts": {
-    "start": "pm2 start . --name octopush"
+    "start": "electron .",
+    "build": "electron-builder"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Octopush",
+    "client",
+    "messaging"
+  ],
+  "author": {
+    "name": "Hadj Said Bakir",
+    "email": "hsbakir.dev@gmail.com"
+  },
+  "homepage": "https://example.com",
   "license": "ISC",
-  "description": "",
+  "description": "Octopush Client for messaging",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.24.0",
-    "pm2": "^5.4.0"
+    "whatsapp-web.js": "^1.24.0"
   },
-  "pkg": {
-    "scripts": [
-      "main.js"
-    ],
-    "targets": [
-      "node16-win-x64"
-    ]
+  "devDependencies": {
+    "electron": "^31.0.1",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.octopush.client",
+    "productName": "Octopush Client",
+    "directories": {
+      "output": "dist"
+    },
+    "linux": {
+      "target": [
+        "tar.gz"
+      ],
+      "category": "Utility",
+      "description": "Octopush Client for messaging",
+      "synopsis": "A client application for Octopush messaging",
+      "maintainer": "Hadj Said Bakir <hsbakir.dev@gmail.com>"
+    }
   }
 }
