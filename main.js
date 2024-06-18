@@ -1,10 +1,19 @@
-const { log } = require("console");
 const { app, BrowserWindow, Tray, Menu } = require("electron");
+const { Client, LocalAuth } = require("whatsapp-web.js");
+const qrcode = require("qrcode-terminal");
+const express = require("express");
+const cors = require("cors"); // Import cors
 
 let mainWindow;
 let tray;
 let quit_from = "";
 const path = require("path");
+// Restore window when clicking on tray icon
+const appExpress = express();
+const port = 4002;
+
+let qrCode;
+let ready = false;
 
 const createWindow = () => {
   mainWindow = new BrowserWindow({
@@ -55,22 +64,11 @@ const createTray = () => {
 app.whenReady().then(() => {
   createWindow();
   createTray();
-  // Restore window when clicking on tray icon
-  const { Client, LocalAuth } = require("whatsapp-web.js");
-  const qrcode = require("qrcode-terminal");
-  const express = require("express");
-  const cors = require("cors"); // Import cors
 
-  const app = express();
-  const port = 4002;
+  appExpress.use(express.json());
+  appExpress.use(cors()); // Enable CORS
 
-  let qrCode;
-  let ready = false;
-
-  app.use(express.json());
-  app.use(cors()); // Enable CORS
-
-  app.listen(port, () => {
+  appExpress.listen(port, () => {
     console.log(`Local server running on http://localhost:${port}`);
   });
   // Create a new client instance
@@ -89,7 +87,7 @@ app.whenReady().then(() => {
     ready = true;
   });
   // Route to check if client is ready
-  app.get("/client/ready", (req, res) => {
+  appExpress.get("/client/ready", (req, res) => {
     res.json({ ready: ready });
   });
 
@@ -111,11 +109,11 @@ app.whenReady().then(() => {
     }
   });
 
-  app.get("/", async (req, res) => {
+  appExpress.get("/", async (req, res) => {
     res.json({ message: "Hello World" });
   });
 
-  app.post("/", async (req, res) => {
+  appExpress.post("/", async (req, res) => {
     const { number, message } = req.body;
 
     if (!number || !message) {
@@ -134,7 +132,7 @@ app.whenReady().then(() => {
   });
 
   // Endpoint to get QR code
-  app.get("/qr", (req, res) => {
+  appExpress.get("/qr", (req, res) => {
     if (qrCode) {
       res.status(200).json({ qrCode });
     } else {
@@ -143,7 +141,7 @@ app.whenReady().then(() => {
   });
 
   // Route to close the WhatsApp session
-  app.post("/close-session", async (req, res) => {
+  appExpress.post("/close-session", async (req, res) => {
     try {
       await client.logout(); // Example method to logout or close session
       await client.destroy();
@@ -154,7 +152,7 @@ app.whenReady().then(() => {
     }
   });
 
-  app.post("/send-messages", async (req, res) => {
+  appExpress.post("/send-messages", async (req, res) => {
     const { numbers, message } = req.body;
 
     if (!numbers || !message) {
