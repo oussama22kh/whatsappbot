@@ -17,13 +17,14 @@ app.listen(port, () => {
 });
 // Create a new client instance
 const client = new Client({
-  authStrategy: new LocalAuth(),
+  authStrategy: new LocalAuth({clientId:"1"}),
   webVersionCache: {
     type: "remote",
     remotePath:
       "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html",
   },
 });
+
 
 // When the client is ready, run this code (only once)
 client.once("ready", () => {
@@ -85,7 +86,7 @@ app.get("/qr", (req, res) => {
 });
 
 // Route to close the WhatsApp session
-app.post("/close-session", async (req, res) => {
+app.get("/close-session", async (req, res) => {
   try {
     await client.logout(); // Example method to logout or close session
     await client.destroy();
